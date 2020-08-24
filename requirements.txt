@@ -33,7 +33,7 @@ Pillow==7.2.0
 plotly==4.9.0
 protobuf==4.0.0rc2
 pvfactors==1.4.1
-pvlib
+git+git://github.com/pvlib/pvlib-python.git
 pyparsing==2.4.7
 python-dateutil==2.8.1
 pytz==2020.1
