@@ -126,10 +126,10 @@ app.layout = html.Div([
 
 
 def initial_render():
-    df  = pd.read_csv('.\\initial_data\\dc_out.csv')
-    df2 = pd.read_csv('.\\initial_data\\ac_out.csv')
-    df3 = pd.read_csv('.\\initial_data\\poa_irrad.csv')
-    df4 = pd.read_csv('.\\initial_data\\pvtemp.csv')
+    df  = pd.read_csv('data_dc_out.csv')
+    df2 = pd.read_csv('data_ac_out.csv')
+    df3 = pd.read_csv('data_poa_irrad.csv')
+    df4 = pd.read_csv('data_pvtemp.csv')
     
     df.rename(columns={'Unnamed: 0':'date'},inplace=True)
     df2.rename(columns={'Unnamed: 0':'date', '0':'p_ac'},inplace=True)
