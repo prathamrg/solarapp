@@ -14,7 +14,7 @@ server = app.server
 app.css.config.serve_locally = False
 app.css.append_css({'external_url': 'https://codepen.io/amyoshino/pen/jzXypZ.css'})
 
-    
+
 app.layout = html.Div([
     html.Div([
         html.H1('Solar PV Generation Forecaster Dashboard', className = 'seven columns')
@@ -22,7 +22,7 @@ app.layout = html.Div([
         className = 'row'),
     html.Div([
         html.Div([
-            html.Div(dcc.Input(id='lat', placeholder='Latitude (Ex: 39.7423)', 
+            html.Div(dcc.Input(id='lat', placeholder='Latitude (Ex: 19.23)', 
                     className = 'two columns')),
             html.Div(dcc.Dropdown(id='pvmanf', options=[
                                                                     {'label': 'Sandia', 'value': 'SandiaMod'}
@@ -31,7 +31,7 @@ app.layout = html.Div([
             ], 
             className = 'row'),
         html.Div([
-            html.Div(dcc.Input(id='lon', placeholder='Longitude (Ex: 105.1785)', 
+            html.Div(dcc.Input(id='lon', placeholder='Longitude (Ex: 72.31)', 
                     className = 'two columns')),
             html.Div(dcc.Dropdown(id='pvmodel', options=[
                                                                     {'label': 'Canadian_Solar_CS5P_220M___2009_', 'value': 'Canadian_Solar_CS5P_220M___2009_'}
@@ -113,56 +113,16 @@ app.layout = html.Div([
        
        
     html.Div([
-        dcc.Graph(id='graph1', className='seven columns'),#, figure=initial_render(1)),
-        dcc.Graph(id='graph2', className='five columns' ),#, figure=initial_render(2)),
-    ], className = 'row'),                                #
-    html.Div([                                            #
-        dcc.Graph(id='graph3', className='four columns' ),#, figure=initial_render(3)),                                            
-        dcc.Graph(id='graph4', className='four columns' ),#, figure=initial_render(4)), 
-        dcc.Graph(id='graph5', className='four columns' )#, figure=initial_render(5)),
+        dcc.Graph(id='graph1', className='seven columns'),
+        dcc.Graph(id='graph2', className='five columns'),
+    ], className = 'row'),
+    html.Div([
+        dcc.Graph(id='graph3', className='four columns'),                                            
+        dcc.Graph(id='graph4', className='four columns'), 
+        dcc.Graph(id='graph5', className='four columns'),
     ], className = 'row')
        
 ], id='container')
-
-
-def initial_render():
-    df  = pd.read_csv('.\\initial_data\\dc_out.csv')
-    df2 = pd.read_csv('.\\initial_data\\ac_out.csv')
-    df3 = pd.read_csv('.\\initial_data\\poa_irrad.csv')
-    df4 = pd.read_csv('.\\initial_data\\pvtemp.csv')
-    
-    df.rename(columns={'Unnamed: 0':'date'},inplace=True)
-    df2.rename(columns={'Unnamed: 0':'date', '0':'p_ac'},inplace=True)
-    df3.rename(columns={'Unnamed: 0':'date'},inplace=True)
-    df4.rename(columns={'Unnamed: 0':'date', '0':'pvtemp'},inplace=True)
-
-    fig1 = go.Figure(layout = {'title': 'Irradiance (Wm^-2)'}, 
-                                        data=[go.Scatter(x=df3.index, y=df3['poa_global'], name='poa_global'), 
-                                              go.Scatter(x=df3.index, y=df3['poa_direct'], name='poa_direct'),
-                                              go.Scatter(x=df3.index, y=df3['poa_diffuse'], name='poa_diffuse'),
-                                              go.Scatter(x=df3.index, y=df3['poa_sky_diffuse'], name='poa_sky_diffuse'),
-                                              go.Scatter(x=df3.index, y=df3['poa_ground_diffuse'], name='poa_ground_diffuse'),
-                                              ])
-    fig2 = go.Figure(layout = {'title': 'PV Module Temperature (degree Celcius)'}, 
-                                data=[go.Scatter(x=df4.index, y=df4['pvtemp'])  
-                                      ])                                  
-                                      
-    fig3 = go.Figure(layout = {'title': 'Open-Circuit & MPP Voltages (V)'}, 
-                                data=[go.Scatter(x=df.index, y=df['v_oc'], name='v_oc'), 
-                                      go.Scatter(x=df.index, y=df['v_mp'], name='v_mp')
-                                      ])
-    fig4 = go.Figure(layout = {'title': 'Short-Circuit & MPP Currents (A)'}, 
-                                data=[go.Scatter(x=df.index, y=df['i_sc'], name='i_sc'), 
-                                      go.Scatter(x=df.index, y=df['i_mp'], name='i_mp')
-                                      ])
-    fig5 = go.Figure(layout = {'title': 'DC and AC MPP Power (W)'}, 
-                                data=[go.Scatter(x=df.index, y=df['p_mp'], name='DC p_mp'), 
-                                      go.Scatter(x=df2.index, y=df2, name='AC p_mp')
-                                      ])
-    #return_object = {1:fig1, 2:fig2, 3:fig3, 4:fig4, 5:fig5}                                
-    #return return_object[graph_id]
-    return fig1, fig2, fig3, fig4, fig5
-
 
 
 @app.callback(
@@ -191,7 +151,6 @@ def initial_render():
         State('daysahead', 'value'),
         
     ])
-
 def update_output(n_clicks, lat, lon, surface_tilt, surface_azimuth, albedo, 
                     pvmanf, pvmodel, invmanf, invmodel, fm, daysahead):
     
@@ -202,9 +161,7 @@ def update_output(n_clicks, lat, lon, surface_tilt, surface_azimuth, albedo,
     fig5 = go.Figure(layout = {'title': 'DC and AC MPP Power (W)'})
     
     if not n_clicks:
-        #return 'Solar pv-generation forecasts', fig1, fig2, fig3, fig4, fig5
-        fig1, fig2, fig3, fig4, fig5 = initial_render()
-        return '1-day ahead solar pv-generation forecasts for NREL - Boulder, Colorado (39.7423N, 105.1785W)', fig1, fig2, fig3, fig4, fig5
+        return 'Solar pv-generation forecasts', fig1, fig2, fig3, fig4, fig5
     elif n_clicks%2 == 0:
         return 'Solar pv-generation forecasts', fig1, fig2, fig3, fig4, fig5
     
